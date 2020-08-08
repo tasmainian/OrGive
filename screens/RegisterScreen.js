@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import * as Yup from 'yup';
 
 import Colors from '../utils/colors';
@@ -117,7 +117,9 @@ export default function RegisterScreen({ navigation }) {
           rightIcon={confirmPasswordIcon}
           handlePasswordVisibility={handleConfirmPasswordVisibility}
         />
-        <FormButton title={'Register'} />
+        <View style={{justifyContent:'center', alignItems: 'center'}}>
+          <FormButton style={styles.button} title={'Register'} />
+        </View>
         {<FormErrorMessage error={registerError} visible={true} />}
       </Form>
       <IconButton
@@ -134,7 +136,7 @@ export default function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    backgroundColor: Colors.mediumGrey
+    backgroundColor: Colors.lightGrey
   },
   backButton: {
     justifyContent: 'center',

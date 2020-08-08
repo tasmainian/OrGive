@@ -117,44 +117,6 @@ const styles = StyleSheet.create({
     width: 125,
     height: 125
   },
-  // subtitle: {
-  //   fontSize: 24,
-  //   fontWeight: '600',
-  //   paddingVertical: 20,
-  //   color: Colors.primary
-  // },
-  // buttonContainer: {
-  //   padding: 20,
-  //   paddingBottom: 60,
-  //   width: '100%'
-  // }
-  inputView:{
-    width:"80%",
-    backgroundColor: Colors.white,
-    borderRadius:25,
-    height:50,
-    marginBottom:20,
-    justifyContent:"center",
-    padding:20
-  },
-  inputText:{
-    height:50,
-    color: Colors.black
-  },
-  forgot:{
-    color: Colors.white,
-    fontSize:11
-  },
-  loginBtn:{
-    width:"80%",
-    backgroundColor: Colors.pink,
-    borderRadius:25,
-    height:50,
-    alignItems:"center",
-    justifyContent:"center",
-    marginTop:40,
-    marginBottom:10
-  },
   loginText:{
     color: Colors.white
   }

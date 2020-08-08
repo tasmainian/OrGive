@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import * as Yup from 'yup';
 
 import Colors from '../utils/colors';
@@ -51,7 +51,9 @@ export default function ForgotPasswordScreen({ navigation }) {
           textContentType="emailAddress"
           autoFocus={true}
         />
-        <FormButton title="Forgot Password" />
+        <View style={{justifyContent:'center', alignItems: 'center'}}>
+          <FormButton title="Forgot Password" />
+        </View>
         {<FormErrorMessage error={customError} visible={true} />}
       </Form>
       <IconButton
@@ -68,7 +70,7 @@ export default function ForgotPasswordScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    backgroundColor: Colors.mediumGrey
+    backgroundColor: Colors.lightGrey
   },
   backButton: {
     justifyContent: 'center',

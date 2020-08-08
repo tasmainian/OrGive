@@ -3,7 +3,10 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 import Colors from '../utils/colors';
 
-export default function AppButton({ title, onPress, color = 'pink' }) {
+export default function AppButton({ title, onPress}) {
+  let color = 'secondary'
+  if (title === 'Login')
+    color = 'pink'
   return (
     <TouchableOpacity
       style={[styles.button, { backgroundColor: Colors[color] }]}
