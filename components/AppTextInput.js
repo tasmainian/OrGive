@@ -31,7 +31,7 @@ export default function AppTextInput({
           <MaterialCommunityIcons
             name={rightIcon}
             size={20}
-            color={Colors.mediumGrey}
+            color={Colors.black}
             style={styles.rightIconStyles}
           />
         </TouchableOpacity>
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     flexDirection: 'row',
     padding: 15,
-    marginVertical: 10
+    marginVertical: 10,
   },
   icon: {
     marginRight: 10

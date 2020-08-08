@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Colors from '../utils/colors';
 
 export default function AppButton({ title, onPress}) {
-  let color = 'secondary'
+  let color = 'blue'
   if (title === 'Login')
     color = 'pink'
   return (

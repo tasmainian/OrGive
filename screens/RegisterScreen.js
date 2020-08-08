@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Yup from 'yup';
-
+import { Text } from 'react-native-elements';
 import Colors from '../utils/colors';
 import SafeView from '../components/SafeView';
 import Form from '../components/Forms/Form';
@@ -12,10 +13,29 @@ import FormErrorMessage from '../components/Forms/FormErrorMessage';
 import { registerWithEmail } from '../components/Firebase/firebase';
 import useStatusBar from '../hooks/useStatusBar';
 
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+
 const validationSchema = Yup.object().shape({
-  name: Yup.string()
+  firstName: Yup.string()
     .required()
-    .label('Name'),
+    .label('First Name'),
+  lastName: Yup.string()
+    .required()
+    .label('Last Name'),
+  dob: Yup.string()
+    // .test(
+    //   "DOB",
+    //   "error message",
+    //   value => {
+    //     return moment().diff(moment(value),'years') >= 18;
+    //   }
+    // )
+    .required()
+    .label('Date of Birth'),
+  phoneNumber: Yup.string()
+    .matches(phoneRegExp, 'Phone number is not valid')
+    .label('phoneNumber')
+    .required('Please enter a valid Phone Number'),
   email: Yup.string()
     .required('Please enter a valid email')
     .email()
@@ -30,15 +50,37 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function RegisterScreen({ navigation }) {
-  useStatusBar('light-content');
+  useStatusBar('dark-content');
 
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
   const [confirmPasswordIcon, setConfirmPasswordIcon] = useState('eye');
   const [confirmPasswordVisibility, setConfirmPasswordVisibility] = useState(
     true
-  );
-  const [registerError, setRegisterError] = useState('');
+  )
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [dateString, setDateString] = useState('');
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+
+  const [registerError, setRegisterError] = useState('')
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+    if(show)
+      setDateString(date.toISOString().substr(0,10));
+  }
+
+  const showMode = (currentMode) => {
+    setShow(!show);
+    setMode(currentMode);
+  }
+
+  const showDatepicker = () => {
+    showMode('date');
+  }
 
   function handlePasswordVisibility() {
     if (rightIcon === 'eye') {
@@ -71,9 +113,11 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <SafeView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
       <Form
         initialValues={{
-          name: '',
+          firstName: '',
+          lastName: '',
           email: '',
           password: '',
           confirmPassword: ''
@@ -82,10 +126,39 @@ export default function RegisterScreen({ navigation }) {
         onSubmit={values => handleOnSignUp(values)}
       >
         <FormField
-          name="name"
+          name="firstName"
           leftIcon="account"
-          placeholder="Enter name"
+          placeholder="Enter first name"
           autoFocus={true}
+        />
+        <FormField
+          name="lastName"
+          leftIcon="account"
+          placeholder="Enter last name"
+        />
+        <FormField
+          name="dob"
+          value={dateString}
+          onChange={showDatepicker} title="Show date picker!"
+          leftIcon="calendar"
+          placeholder="Enter Date of Birth"
+        />
+        <View>
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+            />
+          )}
+        </View>
+        <FormField
+          name="phoneNumber"
+          leftIcon="phone"
+          placeholder="Enter Phone Number"
         />
         <FormField
           name="email"
@@ -125,10 +198,11 @@ export default function RegisterScreen({ navigation }) {
       <IconButton
         style={styles.backButton}
         iconName="keyboard-backspace"
-        color={Colors.white}
+        color={Colors.secondary}
         size={30}
         onPress={() => navigation.goBack()}
       />
+            </ScrollView>
     </SafeView>
   );
 }
@@ -136,7 +210,7 @@ export default function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    backgroundColor: Colors.lightGrey
+    backgroundColor: Colors.white
   },
   backButton: {
     justifyContent: 'center',
