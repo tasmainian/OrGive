@@ -7,7 +7,7 @@ import AppButton from '../components/AppButton';
 import Colors from '../utils/colors';
 import useStatusBar from '../hooks/useStatusBar';
 import * as Yup from 'yup';
-import { loginWithEmail } from '../components/Firebase/firebase';
+import { loginWithEmail, recordLogin, getUsers, db } from '../components/Firebase/firebase';
 import FormErrorMessage from '../components/Forms/FormErrorMessage';
 
 const validationSchema = Yup.object().shape({
@@ -42,7 +42,19 @@ const WelcomeScreen = ({ navigation }) => {
     const { email, password } = values;
 
     try {
+      // await db.ref('users/test').set({
+      //   user: 'Tas',
+      //   sadness: 'high'
+      //   // time: new Date?
+      // }).then(() => {
+      //   console.log('INSERTED')
+      // })
+
+      // await db.ref('users').once('value', (data) => {
+      //   console.log(data.toJSON())
+      // })
       await loginWithEmail(email, password);
+      console.log('test')
     } catch (error) {
       setLoginError(error.message);
     }

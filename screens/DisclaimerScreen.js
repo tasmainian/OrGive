@@ -4,7 +4,7 @@ import { Text } from 'react-native-elements';
 import Colors from '../utils/colors'
 import useStatusBar from '../hooks/useStatusBar';
 
-export default function DisclaimerScreen( {navigation} ) {
+const DisclaimerScreen = ( {navigation} ) => {
   useStatusBar('dark-content');
   const handleOpenWithLinking = () => {
     Linking.openURL('https://myhealth.alberta.ca/Health/pages/conditions.aspx?hwid=abl0501&lang=en-ca#abl0502');
@@ -14,7 +14,7 @@ export default function DisclaimerScreen( {navigation} ) {
     <View style={styles.container}>
         <Text h4 style={{paddingBottom: 30}}>Disclaimer</Text>
         <Text style={styles.disclaimer}>OrGive is a service intended to connect individuals who want to be living organ donors to those in need of an organ. This service does not guarantee the completion of a successful donation. </Text>
-        <Text style={styles.disclaimer}> Suitability to donate will be determined by an evaluation by medical professionals to ensure no adverse physical, psychological, and emotional outcomes will occur before, during, or following the donation.</Text>
+        <Text style={styles.disclaimer}>Suitability to donate will be determined by an evaluation by medical professionals to ensure no adverse physical, psychological, and emotional outcomes will occur before, during, or following the donation.</Text>
 
         <Text style={{fontWeight: 'bold'}}>To learn more, visit:</Text>
         <TouchableOpacity onPress={() => handleOpenWithLinking()}>
@@ -63,3 +63,6 @@ const styles = StyleSheet.create({
       // fontFamily: "Times New Roman"
   }
 });
+
+
+export default DisclaimerScreen;
