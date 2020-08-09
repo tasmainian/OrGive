@@ -9,6 +9,9 @@ import useStatusBar from '../hooks/useStatusBar';
 import * as Yup from 'yup';
 import { loginWithEmail, recordLogin, getUsers, db } from '../components/Firebase/firebase';
 import FormErrorMessage from '../components/Forms/FormErrorMessage';
+// import * as Font from 'expo-font';
+import { useFonts } from '@use-expo/font';
+
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -21,9 +24,14 @@ const validationSchema = Yup.object().shape({
     .label('Password')
 });
 
+const customFonts = {
+  'Pacifico': require('../assets/fonts/Pacifico-Regular.ttf'),
+};
 
 const WelcomeScreen = ({ navigation }) => {
   useStatusBar('light-content');
+  useFonts(customFonts);
+
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
   const [loginError, setLoginError] = useState('');
@@ -42,11 +50,12 @@ const WelcomeScreen = ({ navigation }) => {
     const { email, password } = values;
 
     try {
-      // await db.ref('users/test').set({
+      // let values = {
       //   user: 'Tas',
       //   sadness: 'high'
       //   // time: new Date?
-      // }).then(() => {
+      // }
+      // await db.ref('users/test2').set(values).then(() => {
       //   console.log('INSERTED')
       // })
 
@@ -128,7 +137,8 @@ const styles = StyleSheet.create({
     fontWeight:"bold",
     fontSize:50,
     color: Colors.white,
-    marginBottom:-30
+    marginBottom:-30,
+    fontFamily: 'Pacifico'
   },
   logoContainer: {
     position: 'absolute',

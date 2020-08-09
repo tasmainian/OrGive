@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, TextInput, Picker, Linking, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Image, StyleSheet, Button, View, ScrollView, TextInput, Picker, Linking, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Yup from 'yup';
 import { Text, Header } from 'react-native-elements';
@@ -10,9 +10,13 @@ import FormField from '../components/Forms/FormField';
 import FormButton from '../components/Forms/FormButton';
 import IconButton from '../components/IconButton';
 import FormErrorMessage from '../components/Forms/FormErrorMessage';
-import { registerWithEmail } from '../components/Firebase/firebase';
+import { registerWithEmail, storage, db } from '../components/Firebase/firebase';
 import useStatusBar from '../hooks/useStatusBar';
 import colors from '../utils/colors';
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
+import * as Random from 'expo-random';
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
@@ -73,10 +77,45 @@ const RegisterScreen = ({ navigation }) => {
   const [role, setRole] = useState('orgiver');
   const [organ, setOrgan] = useState('kidney');
   const [story, setStory] = useState('')
+  const [image, setImage] = useState(null)
 
-  // const handleOpenWithLinking = () => {
-  //   Linking.openURL('https://www.blood.ca/en/blood/donating-blood/whats-my-blood-type');
-  // }
+
+  const getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+      }
+    }
+  }
+
+  const _pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!result.cancelled) {
+        setImage(result.uri)
+        uploadImage(result.uri)
+      }
+    } catch (E) {
+      console.log(E);
+    }
+  }
+
+  const uploadImage = async(uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    var ref = storage.ref().child(new Date().toString());
+    return ref.put(blob);
+  }
+
+  useEffect (() => {
+    getPermissionAsync()
+  })
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -116,7 +155,17 @@ const RegisterScreen = ({ navigation }) => {
   }
 
   async function handleOnSignUp(values, actions) {
+    // console.log('values')
+    console.log(values)
+    if(role === 'orgiver')
+      values = { ...values, role, organ, dob: dateString}
+    else
+      values = {...values, role, organ, story, dob: dateString}
+    console.log(values)
     const { email, password } = values;
+    const uuid = await Random.getRandomBytesAsync(16);
+    await db.ref('users/'+uuid).set(values)
+
     try {
       await registerWithEmail(email, password);
     } catch (error) {
@@ -217,6 +266,10 @@ const RegisterScreen = ({ navigation }) => {
   return (
     <SafeView style={styles.container}>
       <ScrollView style={styles.scrollView}>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Button title="Upload Profile Picture" onPress={_pickImage} />
+        {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+      </View>
       <Form
         initialValues={{
           firstName: '',
@@ -226,7 +279,7 @@ const RegisterScreen = ({ navigation }) => {
           confirmPassword: '',
 
         }}
-        validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         onSubmit={values => handleOnSignUp(values)}
       >
         <FormField
