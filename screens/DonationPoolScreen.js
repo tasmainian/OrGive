@@ -54,6 +54,7 @@ const DonationPoolScreen = () => {
     setSelectedIndex(selectedIndex)
   }
   let topPicksList = []
+  let declineList = []
   if(currentUserObj != null){
     db.ref('topPicks/'+currentUserObj.key).on('value', (data) => {
       let picks = data.val();
@@ -66,15 +67,35 @@ const DonationPoolScreen = () => {
         }
       }
     })
+    db.ref('declinePool/'+currentUserObj.key).on('value', (data) => {
+      let picks = data.val();
+      if(picks != null){
+        let keys = Object.keys(picks);
+        for (let i = 0; i < keys.length; i++){
+          let k = keys[i]
+          let pick = picks[k].recipientEmail
+          declineList.push(pick)
+        }
+      }
+    })
   }
   let topPicksListSet = [...new Set(topPicksList)];
-  let pooledList = accounts.filter(e => {return e.organ === currentUserObj.organ && !topPicksListSet.includes(e.email)})
+  let declinedListSet = [...new Set(declineList)]
+  let pooledList = accounts.filter(e => {return e.organ === currentUserObj.organ && !topPicksListSet.includes(e.email) && !declinedListSet.includes(e.email)})
 
-  console.log(topPicksListSet)
+  // console.log(topPicksListSet)
   async function addToPicks (e) {
+    console.log('rightswipe')
     const addRecipient = pooledList[e].email
     const uuid = await Random.getRandomBytesAsync(16);
     await db.ref('topPicks/'+currentUserObj.key+'/'+uuid).set({recipientEmail: addRecipient}).then(() => {console.log('updated')})
+  }
+
+  async function declinePicks (e) {
+    console.log('leftswipe')
+    const addRecipient = pooledList[e].email
+    const uuid = await Random.getRandomBytesAsync(16);
+    await db.ref('declinePool/'+currentUserObj.key+'/'+uuid).set({recipientEmail: addRecipient}).then(() => {console.log('updated')})
   }
 
   let pool = null
@@ -109,8 +130,8 @@ const DonationPoolScreen = () => {
           setSwiper(swiper)
         }}
 
-        onSwiped={(e) => addToPicks(e)}
-        onSwipedLeft={() => console.log('onSwipedLeft')}
+        onSwipedRight={(e) => addToPicks(e)}
+        onSwipedLeft={(e) => declinePicks(e)}
       >
       {pooledList.map((e, i) => {
           return(
@@ -118,6 +139,7 @@ const DonationPoolScreen = () => {
               <Text style={styles.label}>{e.firstName+' '+e.lastName}</Text>
               <Text style={styles.story}>{'Looking for a ' +e.organ}</Text>
               <Text style={styles.story}>{'Born on ' + e.dob}</Text>
+              <Text style={styles.story}>{'Blood Type is ' + e.bloodType}</Text>
               <Text style={styles.story}>{e.story}</Text>
             </Card>
           )

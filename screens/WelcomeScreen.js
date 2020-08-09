@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Image, TextInput, TouchableOpacity } from 'react-native';
 import Form from '../components/Forms/Form';
 import FormField from '../components/Forms/FormField';
@@ -9,9 +9,8 @@ import useStatusBar from '../hooks/useStatusBar';
 import * as Yup from 'yup';
 import { loginWithEmail, recordLogin, getUsers, db } from '../components/Firebase/firebase';
 import FormErrorMessage from '../components/Forms/FormErrorMessage';
-// import * as Font from 'expo-font';
-import { useFonts } from '@use-expo/font';
-
+import { AppLoading } from 'expo';
+import { useFonts } from 'expo-font';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -30,8 +29,13 @@ const customFonts = {
 
 const WelcomeScreen = ({ navigation }) => {
   useStatusBar('light-content');
-  useFonts(customFonts);
+  // useFonts(customFonts);
+  // useFonts(customFonts)
+  
 
+  // if (!fontsLoaded) {
+  //   return null;
+  // } 
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
   const [loginError, setLoginError] = useState('');
@@ -138,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize:50,
     color: Colors.white,
     marginBottom:-30,
-    fontFamily: 'Pacifico'
+    // fontFamily: 'Pacifico'
   },
   logoContainer: {
     position: 'absolute',
