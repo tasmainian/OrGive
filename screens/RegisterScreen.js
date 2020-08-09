@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, StyleSheet, Button, View, ScrollView, TextInput, Picker, Linking, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Button, View, ScrollView, TextInput, Picker, Linking, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Yup from 'yup';
 import { Text, Header } from 'react-native-elements';
@@ -266,6 +266,10 @@ const RegisterScreen = ({ navigation }) => {
 
   return (
     <SafeView style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
       <ScrollView style={styles.scrollView}>
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Button title="Upload Profile Picture" onPress={_pickImage} />
@@ -378,6 +382,7 @@ const RegisterScreen = ({ navigation }) => {
           onPress={() => navigation.goBack()}
         />
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeView>
   );
 }
