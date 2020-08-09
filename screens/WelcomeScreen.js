@@ -30,12 +30,13 @@ const customFonts = {
 const WelcomeScreen = ({ navigation }) => {
   useStatusBar('light-content');
   // useFonts(customFonts);
-  // useFonts(customFonts)
+  const [fontsLoaded] = useFonts(customFonts)
   
 
   // if (!fontsLoaded) {
   //   return null;
   // } 
+
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
   const [loginError, setLoginError] = useState('');
@@ -74,7 +75,7 @@ const WelcomeScreen = ({ navigation }) => {
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>OrGive</Text>
+      {fontsLoaded && <Text style={styles.title}>OrGive</Text>}
       <Image source={require('../assets/orgiveLogo.png')} style={styles.logo} />
       <View style={styles.logoContainer}>
       </View>
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     fontSize:50,
     color: Colors.white,
     marginBottom:-30,
-    // fontFamily: 'Pacifico'
+    fontFamily: 'Pacifico'
   },
   logoContainer: {
     position: 'absolute',
