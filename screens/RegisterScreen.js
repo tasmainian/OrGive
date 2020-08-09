@@ -232,7 +232,7 @@ const RegisterScreen = ({ navigation }) => {
   )
 
   const recipientForm = (
-    <View>
+    <View styles={{padding:20}}>
       <FormField
         name="donorListRegNum"
         leftIcon="folder-pound"
