@@ -12,9 +12,9 @@ export default function DisclaimerScreen( {navigation} ) {
 
   return (
     <View style={styles.container}>
-        <Text h4 style={{paddingBottom: 30}}>Terms and Conditions</Text>
-        <Text style={styles.disclaimer}>    OrGive is a service intended to connect individuals who want to be living organ donors to those in need of an organ. This service does not guarantee the completion of a successful donation. </Text>
-        <Text style={styles.disclaimer}>    Suitability to donate will be determined by an evaluation by medical professionals to ensure no adverse physical, psychological, and emotional outcomes will occur before, during, or following the donation.</Text>
+        <Text h4 style={{paddingBottom: 30}}>Disclaimer</Text>
+        <Text style={styles.disclaimer}>OrGive is a service intended to connect individuals who want to be living organ donors to those in need of an organ. This service does not guarantee the completion of a successful donation. </Text>
+        <Text style={styles.disclaimer}> Suitability to donate will be determined by an evaluation by medical professionals to ensure no adverse physical, psychological, and emotional outcomes will occur before, during, or following the donation.</Text>
 
         <Text style={{fontWeight: 'bold'}}>To learn more, visit:</Text>
         <TouchableOpacity onPress={() => handleOpenWithLinking()}>
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   },
   disclaimer:{
       paddingBottom: 20,
-      fontWeight: 'bold'
+      // fontWeight: 'bold',
+      // fontFamily: "Times New Roman"
   }
 });

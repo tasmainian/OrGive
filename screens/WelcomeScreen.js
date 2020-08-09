@@ -50,7 +50,7 @@ const WelcomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>OrGive</Text>
-      <Image source={require('../assets/flame.png')} style={styles.logo} />
+      <Image source={require('../assets/orgiveLogo.png')} style={styles.logo} />
       <View style={styles.logoContainer}>
       </View>
         <Form
@@ -87,7 +87,7 @@ const WelcomeScreen = ({ navigation }) => {
           <FormButton title={'Login'} />
           {<FormErrorMessage error={loginError} visible={true} />}
         </Form>
-        <TouchableOpacity onPress={() => navigation.navigate('Disclaimer')}>
+        <TouchableOpacity style={{paddingBottom: 10}} onPress={() => navigation.navigate('Disclaimer')}>
           <Text style={styles.loginText}>Register</Text>
         </TouchableOpacity>
 
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     fontWeight:"bold",
     fontSize:50,
     color: Colors.white,
-    marginBottom:40
+    marginBottom:-30
   },
   logoContainer: {
     position: 'absolute',

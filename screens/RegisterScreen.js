@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, Button, Picker } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Yup from 'yup';
 import { Text } from 'react-native-elements';
@@ -46,10 +46,15 @@ const validationSchema = Yup.object().shape({
     .label('Password'),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password')], 'Confirm Password must match Password')
-    .required('Confirm Password is required')
+    .required('Confirm Password is required'),
+  bloodType: Yup.string()
+  .required()
+  .min(2, 'Blood type must have at least 2 characters')
+  .label('BloodType'),
+
 });
 
-export default function RegisterScreen({ navigation }) {
+const RegisterScreen = ({ navigation }) => {
   useStatusBar('dark-content');
 
   const [passwordVisibility, setPasswordVisibility] = useState(true);
@@ -62,8 +67,9 @@ export default function RegisterScreen({ navigation }) {
   const [dateString, setDateString] = useState('');
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
-
   const [registerError, setRegisterError] = useState('')
+  const [role, setRole] = useState('orgiver');
+
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -110,6 +116,18 @@ export default function RegisterScreen({ navigation }) {
       setRegisterError(error.message);
     }
   }
+
+  const donorForm = (
+    <FormField
+      name="bloodType"
+      leftIcon="blood-bag"
+      placeholder="Select "
+    />
+  )
+
+  const recipientForm = (
+    <Text>Im so helpless</Text>
+  )
 
   return (
     <SafeView style={styles.container}>
@@ -190,6 +208,16 @@ export default function RegisterScreen({ navigation }) {
           rightIcon={confirmPasswordIcon}
           handlePasswordVisibility={handleConfirmPasswordVisibility}
         />
+        <Picker
+          selectedValue={role}
+          onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
+        >
+          <Picker.Item value="orgiver" label="I want to donate as a living donor" />
+          <Picker.Item value="recipient" label="I need an organ" />
+        </Picker>
+
+        {role == 'orgiver' && donorForm}
+        {role == 'recipient' && recipientForm}
         <View style={{justifyContent:'center', alignItems: 'center'}}>
           <FormButton style={styles.button} title={'Register'} />
         </View>
@@ -218,3 +246,5 @@ const styles = StyleSheet.create({
     marginVertical: 10
   }
 });
+
+export default RegisterScreen
