@@ -3,16 +3,16 @@ import { View, StyleSheet, Button, Text, TouchableOpacity, Image } from 'react-n
 import CardStack, { Card } from 'react-native-card-stack-swiper';
 import useStatusBar from '../hooks/useStatusBar';
 import { logout, auth } from '../components/Firebase/firebase';
-import { AuthUserContext } from '../navigation/AuthUserProvider';
 import { db } from '../components/Firebase/firebase';
+import { ButtonGroup } from 'react-native-elements';
+import * as Random from 'expo-random';
 
-export default function DonationPoolScreen() {
+const DonationPoolScreen = () => {
   useStatusBar('dark-content');
   const [swiper, setSwiper] = useState(null)
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const buttons = ['Donation Pool', 'Top Picks']
   let currentUser =auth.currentUser;
-  console.log('USERRRRR')
-  console.log(currentUser.email)
-  // const { userLogin, setUserLogin } = useState(AuthUserContext)
   let currentUserObj = null
   let accounts = []
   db.ref('users').on('value', (data) => {
@@ -20,7 +20,8 @@ export default function DonationPoolScreen() {
     let keys = Object.keys(users);
     for (let i = 0; i < keys.length; i++){
       let k = keys[i]
-      let user = { 
+      let user = {
+        key:  k,
         bloodType: users[k].bloodType,
         firstName: users[k].firstName,
         lastName: users[k].lastName,
@@ -39,7 +40,6 @@ export default function DonationPoolScreen() {
         currentUserObj = user
     }
   })
-  let pooledList = accounts.filter(e => {return e.organ === currentUserObj.organ})
 
   async function handleSignOut() {
     try {
@@ -50,11 +50,58 @@ export default function DonationPoolScreen() {
     }
   }
 
+  function updateIndex (selectedIndex) {
+    setSelectedIndex(selectedIndex)
+  }
+  let topPicksList = []
+  if(currentUserObj != null){
+    db.ref('topPicks/'+currentUserObj.key).on('value', (data) => {
+      let picks = data.val();
+      if(picks != null){
+        let keys = Object.keys(picks);
+        for (let i = 0; i < keys.length; i++){
+          let k = keys[i]
+          let pick = picks[k].recipientEmail
+          topPicksList.push(pick)
+        }
+      }
+    })
+  }
+  let topPicksListSet = [...new Set(topPicksList)];
+  let pooledList = accounts.filter(e => {return e.organ === currentUserObj.organ && !topPicksListSet.includes(e.email)})
+
+  console.log(topPicksListSet)
+  async function addToPicks (e) {
+    const addRecipient = pooledList[e].email
+    const uuid = await Random.getRandomBytesAsync(16);
+    await db.ref('topPicks/'+currentUserObj.key+'/'+uuid).set({recipientEmail: addRecipient}).then(() => {console.log('updated')})
+  }
+
   let pool = null
+  let topPicks = null
   if(currentUserObj !== null && currentUserObj.role === 'orgiver'){
+    topPicks = (
+      <View>
+          <ButtonGroup
+          onPress={updateIndex}
+          selectedIndex={selectedIndex}
+          buttons={buttons}
+          containerStyle={{height: 50, marginBottom: 10 }}
+        />
+        {topPicksListSet.map(email => {
+          return <Text>{email}</Text>
+        })}
+
+      </View>
+    )
     pool = (
       <View style={styles.container}>
-      
+            <ButtonGroup
+        onPress={updateIndex}
+        selectedIndex={selectedIndex}
+        buttons={buttons}
+        containerStyle={{height: 50, marginBottom: 30, bottom: 0}}
+      />
 
       <CardStack style={styles.content}
         renderNoMoreCards={() => <Text style={{fontWeight:'700', fontSize:18, color:'gray'}}>No more recipients :(</Text>}
@@ -62,7 +109,7 @@ export default function DonationPoolScreen() {
           setSwiper(swiper)
         }}
 
-        onSwiped={() => console.log('onSwiped')}
+        onSwiped={(e) => addToPicks(e)}
         onSwipedLeft={() => console.log('onSwipedLeft')}
       >
       {pooledList.map((e, i) => {
@@ -84,11 +131,11 @@ export default function DonationPoolScreen() {
           }}>
             <Image source={require('../assets/red.png')} resizeMode={'contain'} style={{ height: 62, width: 62 }} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button,styles.orange]} onPress={() => {
+          {/* <TouchableOpacity style={[styles.button,styles.orange]} onPress={() => {
             swiper.goBackFromLeft();
           }}>
             <Image source={require('../assets/back.png')} resizeMode={'contain'} style={{ height: 32, width: 32, borderRadius: 5 }} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity style={[styles.button,styles.green]} onPress={()=>{
             swiper.swipeRight();
           }}>
@@ -109,9 +156,10 @@ export default function DonationPoolScreen() {
   return (
     <View style={styles.container}>
       <Button title="Sign Out" onPress={handleSignOut} />
-      {pool}
+      {selectedIndex === 0 && pool}
+      {selectedIndex === 1 && topPicks}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -208,3 +256,5 @@ const styles = StyleSheet.create({
     borderColor:'#fd267d',
   }
 });
+
+export default DonationPoolScreen;

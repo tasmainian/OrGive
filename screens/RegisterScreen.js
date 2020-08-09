@@ -156,9 +156,10 @@ const RegisterScreen = ({ navigation }) => {
 
   async function handleOnSignUp(values, actions) {
     // console.log('values')
+    let topPicks = ''
     console.log(values)
     if(role === 'orgiver')
-      values = { ...values, role, organ, dob: dateString}
+      values = { ...values, role, organ, dob: dateString, topPicks}
     else
       values = {...values, role, organ, story, dob: dateString}
     console.log(values)
